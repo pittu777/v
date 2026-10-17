@@ -6,7 +6,7 @@ export function formatINR(paise: number):string{
     }).format(paise / 100);
 }
 
-export function isLowStock(currentStock: number, threshold: number):boolean{
+export function isLowStock(currentStock: number, threshold:number = 3):boolean{
     return currentStock > 0 && currentStock <= threshold;
 }
 
