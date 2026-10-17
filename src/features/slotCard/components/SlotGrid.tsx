@@ -21,8 +21,21 @@ const SlotGrid = () => {
     const [selectedSlot, setSelectedSlot] = useState<string|undefined>("");
     const [selectedFilter, setSelectedFilter] =
     useState<SlotFilter>("ALL");
+    const [search, setSearch] = useState("");
 
-    const filteredSlots = filterSlots(slots, selectedFilter);
+    const normalizedSearch = search.trim().toLowerCase();
+
+    const filteredSlots = filterSlots(slots, selectedFilter).filter(
+      (slot)=> {
+        const slotCode = slot.slotCode.toLowerCase();
+        const productName = slot.productName?.toLowerCase() ?? "";
+
+        return (
+      slotCode.includes(normalizedSearch) ||
+      productName.includes(normalizedSearch)
+    );
+      }
+    )
 
     const onSelect=(slotCode: string)=>{
       
@@ -54,6 +67,16 @@ const SlotGrid = () => {
           </button>
         ))}
       </div>
+
+      <form>
+      <input
+  type="text"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  placeholder="Search by product or slot code..."
+  className="w-full rounded-lg border border-zinc-300 px-4 py-2 text-white"
+/>
+      </form>
 
       {filteredSlots.length === 0 ? (
         <p className="text-sm text-zinc-500">
