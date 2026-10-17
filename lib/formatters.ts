@@ -11,3 +11,14 @@ export function isLowStock(currentStock: number, threshold:number = 3):boolean{
 }
 
 
+export function inStock(currentStock:number, threshold:number=3):boolean{
+    return currentStock > 0 && currentStock >= threshold;
+}
+
+
+export function IsOutOfStock(currentStock:number){
+    return currentStock===0;
+}
+
+
+

@@ -7,24 +7,25 @@ interface StockLevel{
 }
 
 
-type Status = "In Stock" | "Low Stock" | "Out of Stock";
+type Status = "In Stock" | "Low Stock" | "Out of Stock" | "Empty";
 
 
 
-interface Slot{
+export interface Slot{
     slotCode : string;
     productName? : string;
     price:number;
     stock : StockLevel;
-    statusBadge :  Status;
     onSelect?: ()=>void; 
+    isSelected?: boolean;
 }
+
+
 
 
 export const SlotCard=({
     price,
     slotCode,
-    statusBadge,
     stock,
     onSelect,
     productName,
