@@ -12,11 +12,14 @@ type Props={
 
 
 export function AddToCartButton({
-    productId,
-    name,
-    price,
+    productId = "2",
+    name = "cc",
+    price = 333,
 }: Props){
     const addItem = useCartStore((state) => state.addItem);
+
+    const cartItems = useCartStore((state)=> state.items);
+    console.log(cartItems);
 
     return(
         <button onClick={()=> addItem({productId, name, price})}>

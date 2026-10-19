@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type CartItem = {
   productId: string;
@@ -15,7 +16,11 @@ type CartStore = {
   clearCart: () => void;
 };
 
-export const useCartStore = create<CartStore>()((set) => ({
+export const useCartStore = create<CartStore>()(
+  persist(
+
+  
+  (set) => ({
   items: [],
 
   addItem: (item) =>
@@ -47,4 +52,12 @@ export const useCartStore = create<CartStore>()((set) => ({
     })),
 
   clearCart: () => set({ items: [] }),
-}));
+}),
+
+{
+  name : "cart-storage",
+}
+
+  )
+
+);

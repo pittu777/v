@@ -5,6 +5,7 @@ import { slots } from '../exmple/slotData'
 import InventorySummary from './InventorySummary';
 import { filterSlots, type SlotFilter } from '../utils/slotFilters';
 import { useInventory } from '@/src/stores/inventory-store';
+import { AddToCartButton } from '../../cart/components/AddToCartButton';
 
 
 
@@ -64,6 +65,8 @@ const SlotGrid = () => {
    return (
     <section className="space-y-6">
       <h1 className="text-2xl font-bold">Machine Inventory</h1>
+
+      <AddToCartButton price={22} productId='2' name='second'/>
 
       <InventorySummary slots={slots} />
 

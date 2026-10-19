@@ -7,7 +7,6 @@ interface StockLevel{
 }
 
 
-type Status = "In Stock" | "Low Stock" | "Out of Stock" | "Empty";
 
 
 
