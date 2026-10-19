@@ -7,7 +7,9 @@ export default function SignInPage() {
       <Suspense fallback={<div>Loading signup...</div>}>
     <div className="flex min-h-screen items-center justify-center">
 
-      <SignIn />
+      <SignIn 
+      
+      />
     </div>
       </Suspense>
   );
