@@ -1,9 +1,9 @@
 
 import { useEffect } from "react";
 
-type Handler = (event:Event) => void;
 
-function useEventListener(eventName:string, handler:Handler) {
+
+function useEventListener<K extends keyof WindowEventMap>(eventName:K, handler:(event: WindowEventMap[K]) => void) {
   useEffect(() => {
     window.addEventListener(eventName, handler);
 
@@ -14,3 +14,8 @@ function useEventListener(eventName:string, handler:Handler) {
 }
 
 export default useEventListener;
+
+
+useEventListener("resize", ()=>{
+    console.log("resizing");
+})
