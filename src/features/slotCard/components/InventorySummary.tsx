@@ -1,4 +1,5 @@
 
+import { useInventory } from "@/src/stores/inventory-store";
 import { Slot } from "./SlotCard";
 import { inStock, isLowStock, IsOutOfStock } from "@/lib/formatters";
 
@@ -7,8 +8,18 @@ interface InventorySummaryProps {
 }
 
 const InventorySummary = ({ slots }: InventorySummaryProps) => {
-  // Total number of slots, including empty slots
+  
   const totalSlots = slots.length;
+
+  const setFilter = useInventory(
+    (state) => state.setSelectedFilter
+  )
+
+  const slectedFilter = useInventory(
+    (state) => state.selectedFilter
+  )
+
+  console.log("selectedFilter", slectedFilter);
 
   
   const hasProduct = (slot: Slot) =>
@@ -27,7 +38,7 @@ const InventorySummary = ({ slots }: InventorySummaryProps) => {
       isLowStock(slot.stock.current)
   ).length;
 
-  // Count slots with healthy stock
+  
   const inStockCount = slots.filter(
     (slot) =>
       hasProduct(slot) &&
@@ -35,7 +46,7 @@ const InventorySummary = ({ slots }: InventorySummaryProps) => {
       !IsOutOfStock(slot.stock.current)
   ).length;
 
-  // Count products that are sold out
+  
   const outOfStockCount = slots.filter(
     (slot) =>
       hasProduct(slot) &&
@@ -48,28 +59,29 @@ const InventorySummary = ({ slots }: InventorySummaryProps) => {
         Inventory Summary
       </h2>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-        <div className="rounded-xl border p-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5"
+     >
+        <div className="rounded-xl border p-4"  onClick={()=> setFilter("ALL")}>
           <p className="text-sm text-zinc-500">Total Slots</p>
           <p className="mt-1 text-2xl font-bold">{totalSlots}</p>
         </div>
 
-        <div className="rounded-xl border p-4">
+        <div className="rounded-xl border p-4"  onClick={()=> setFilter("IN_STOCK")}>
           <p className="text-sm text-emerald-600">In Stock</p>
           <p className="mt-1 text-2xl font-bold">{inStockCount}</p>
         </div>
 
-        <div className="rounded-xl border p-4">
+        <div className="rounded-xl border p-4"  onClick={()=> setFilter("LOW_STOCK")}>
           <p className="text-sm text-amber-600">Low Stock</p>
           <p className="mt-1 text-2xl font-bold">{lowStockCount}</p>
         </div>
 
-        <div className="rounded-xl border p-4">
+        <div className="rounded-xl border p-4"  onClick={()=> setFilter("OUT_OF_STOCK")}>
           <p className="text-sm text-red-600">Out of Stock</p>
           <p className="mt-1 text-2xl font-bold">{outOfStockCount}</p>
         </div>
 
-        <div className="rounded-xl border p-4">
+        <div className="rounded-xl border p-4"  onClick={()=> setFilter("EMPTY")}>
           <p className="text-sm text-zinc-500">Empty Slots</p>
           <p className="mt-1 text-2xl font-bold">{emptySlotCount}</p>
         </div>

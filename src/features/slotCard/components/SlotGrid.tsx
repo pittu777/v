@@ -1,10 +1,10 @@
 
 "use client";
-import React, { useState } from 'react'
-import { Slot, SlotCard } from './SlotCard'
+import { SlotCard } from './SlotCard'
 import { slots } from '../exmple/slotData'
 import InventorySummary from './InventorySummary';
 import { filterSlots, type SlotFilter } from '../utils/slotFilters';
+import { useInventory } from '@/src/stores/inventory-store';
 
 
 
@@ -18,10 +18,27 @@ const filters: { value: SlotFilter; label: string }[] = [
 
 
 const SlotGrid = () => {
-    const [selectedSlot, setSelectedSlot] = useState<string|undefined>("");
-    const [selectedFilter, setSelectedFilter] =
-    useState<SlotFilter>("ALL");
-    const [search, setSearch] = useState("");
+    
+
+    const search = useInventory(
+      (state) => state.searchQuery,
+    )
+
+    const selectedFilter = useInventory(
+      (state) => state.selectedFilter,
+    )
+     const selectedSlot = useInventory(
+      (state) => state.selectedSlot,
+    )
+    const setSelectedSlot = useInventory(
+      (state) => state.selectSlot,
+    )
+    const setSelectedFilter = useInventory(
+      (state) => state.setSelectedFilter,
+    )
+    const setSearch = useInventory(
+      (state) => state.setSearchQuery,
+    )
 
     const normalizedSearch = search.trim().toLowerCase();
 
