@@ -143,6 +143,15 @@ file. Continue using `--config prisma7.config.ts` while both filenames
 exist. Do not blindly delete either file; first verify which config the
 CLI loads and preserve the working config.
 
+
+PS D:\vendor> npx prisma validate --config prisma7.config.ts
+Loaded Prisma config from prisma7.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+The schema at prisma\schema.prisma is valid 🚀
+PS D:\vendor> npx prisma migrate dev --config prisma7.config.ts --name add_user
+Loaded Prisma config from prisma7.config.ts.
+
 ## 5. Useful commands
 
 Run commands from the project root:
@@ -292,3 +301,28 @@ updates change Next.js, React, Clerk, or Prisma versions.
 config is `prisma7.config.ts`, and `prisma/schema.prisma` validates. The
 next safe action is to back up the schema and introspect Supabase with
 `prisma db pull`; this has not yet been confirmed as completed.
+
+
+
+
+
+
+
+
+
+PS D:\vendor> npx prisma validate --config prisma7.config.ts
+Loaded Prisma config from prisma7.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+The schema at prisma\schema.prisma is valid 🚀
+PS D:\vendor> npx prisma migrate dev --config prisma7.config.ts --name add_user
+Loaded Prisma config from prisma7.config.ts.
+
+PS D:\vendor> npx prisma generate --config prisma7.config.ts
+Loaded Prisma config from prisma7.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+
+✔ Generated Prisma Client (7.10.1) to .\src\generated\prisma in 95ms
+
+PS D:\vendor> 
