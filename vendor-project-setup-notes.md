@@ -305,9 +305,261 @@ next safe action is to back up the schema and introspect Supabase with
 
 
 
+Here is your Git command cheat sheet for your `D:\vendor` project. It covers fetching all remote branches, switching to branches that don't exist locally, rebasing, committing, pushing, resolving conflicts, and undoing mistakes.
+
+# 1. Basic Git commands
+
+```
+# Check current branch and working-tree status
+git status
+git branch
+
+# Show local and remote branches
+git branch
+git branch -r
+git branch -a
+
+# Show configured remotes
+git remote -v
+
+# View recent commits
+git log --oneline -10
+```
+
+# 2. Fetch all remote branches
+
+```
+# Fetch updates from the default remote
+git fetch
+
+# Fetch all remotes and prune deleted remote-tracking branches
+git fetch --all --prune
+
+# Fetch all branches from origin
+git fetch origin
+
+# Show remote branches
+git branch -r
+
+# Show both local and remote branches
+git branch -a
+```
+
+Remember: `git fetch` downloads remote references and commits without merging them into your current branch or changing your working files.
+
+# 3. Switch to a remote branch that doesn't exist locally
+
+Suppose GitHub has a branch named `feature/products`, but you don't have it locally yet.
+
+Recommended workflow
+
+```
+git fetch origin
+git branch -r
+git switch --track origin/feature/products
+```
+
+This creates a local `feature/products` branch that tracks `origin/feature/products`.
+
+Other useful commands:
+
+```
+# Create a local branch tracking a remote branch
+git switch -c feature/products --track origin/feature/products
+
+# Switch to an existing local branch
+git switch feature/products
+
+# Create and switch to a new local branch
+git switch -c feature/new-feature
+
+# Older equivalent for switching to a remote branch
+git checkout -b feature/products origin/feature/products
+```
+
+If Git reports that the branch already exists locally, use `git switch feature/products`.
+
+# 4. Pull changes from GitHub
+
+```
+# Pull from the upstream branch configured for your current branch
+git pull
+
+# Fetch and merge origin/main into your current branch
+git pull origin main
+
+# Fetch and rebase your current branch onto origin/main
+git pull --rebase origin main
+```
+
+Prefer an explicit `git fetch` followed by a review when you're unsure what the remote contains.
+
+# 5. Commit and push your code
+
+Typical workflow for a new feature:
+
+```
+# Check your changes
+git status
+git diff
+
+# Stage selected files
+git add src/features/products/
+
+# Or stage all changes
+git add .
+
+# Create a commit
+git commit -m "feat: add product management"
+
+# Push the current branch to GitHub
+git push
+
+# First push for a new local branch
+git push -u origin feature/products
+```
+
+The `-u` option sets the upstream branch, so future pushes can use just `git push`.
+
+Useful commit message prefixes:
+
+- `feat:` — new feature
+- `fix:` — bug fix
+- `refactor:` — code restructuring
+- `docs:` — documentation
+- `test:` — tests
+- `chore:` — maintenance
+
+# 6. Rebase your feature branch onto the latest main
+
+Use this when your feature branch needs the latest changes from `main`.
+
+Step-by-step
+
+```
+# Make sure your work is committed or safely stashed
+git status
+
+# Download the latest remote references
+git fetch origin
+
+# Switch to your feature branch
+git switch feature/products
+
+# Replay your feature commits on top of origin/main
+git rebase origin/main
+```
+
+If successful, your feature commits are now based on the latest `origin/main`.
+
+If you have uncommitted work, commit it or stash it before rebasing.
+
+```
+# Temporarily save tracked and untracked changes
+git stash push -u -m "work before rebase"
+
+# Restore them after the rebase
+git stash pop
+```
+
+## Rebase conflict commands
+
+```
+# Check which files conflict
+git status
+
+# Edit the conflicted files and resolve the conflict markers
+# Stage each resolved file
+git add src/path/to/file.ts
+
+# Continue the rebase
+git rebase --continue
+
+# Cancel the rebase and return to the pre-rebase state
+git rebase --abort
+```
+
+After a successful rebase, push normally if the branch is new or hasn't rewritten commits already on the remote. If you've rewritten commits that were previously pushed, you may need:
+
+```
+git push --force-with-lease
+```
+
+Use this only on your own feature branch when you understand the impact. Avoid force-pushing shared branches.
+
+# 7. Merge vs. rebase
+
+| Command                  | What it does                                                     |
+| ------------------------ | ---------------------------------------------------------------- |
+| `git merge origin/main`  | Combines histories and may create a merge commit                 |
+| `git rebase origin/main` | Replays your current branch's commits on top of `origin/main`    |
+| `git pull`               | Fetches and integrates changes using the configured strategy     |
+| `git pull --rebase`      | Fetches and rebases your local commits over the upstream commits |
+
+For your project, rebasing your own feature branch onto `origin/main` is a reasonable workflow. Follow your team's convention for shared branches.
+
+# 8. Undo mistakes safely
+
+```
+# Unstage a file without deleting your changes
+git restore --staged src/path/to/file.ts
+
+# Discard uncommitted changes in a file — destructive
+git restore src/path/to/file.ts
+
+# Undo a commit by creating a new inverse commit
+git revert <commit-hash>
+
+# Create a new branch at a specific commit
+git switch -c recovery-branch <commit-hash>
+
+# Show all recent HEAD movements
+git reflog
+```
+
+Be careful with `git reset --hard`: it discards tracked working-tree changes and can move your branch pointer. Don't use it unless you're certain you no longer need the affected work.
+
+# 9. Quick reference
+
+| Goal                            | Command                                          |
+| ------------------------------- | ------------------------------------------------ |
+| Fetch all remotes               | `git fetch --all --prune`                        |
+| List remote branches            | `git branch -r`                                  |
+| Switch to remote-only branch    | `git switch --track origin/branch-name`          |
+| Create a branch                 | `git switch -c branch-name`                      |
+| Check changes                   | `git status`                                     |
+| Stage everything                | `git add .`                                      |
+| Commit                          | `git commit -m "message"`                        |
+| Push first time                 | `git push -u origin branch-name`                 |
+| Push existing branch            | `git push`                                       |
+| Update feature branch with main | `git fetch origin` then `git rebase origin/main` |
+| Continue rebase                 | `git rebase --continue`                          |
+| Abort rebase                    | `git rebase --abort`                             |
+| Undo a commit safely            | `git revert <hash>`                              |
+
+## Your everyday feature workflow
+
+For your vending-machine app, this is a good default sequence:
+
+```
+git status
+git fetch origin
+git switch main
+git pull --ff-only origin main
+git switch -c feature/products
+# Make your code changes
+git add .
+git commit -m "feat: implement product management"
+git push -u origin feature/products
+```
+
+If `feature/products` already exists on GitHub, fetch first and switch to it using `git switch --track origin/feature/products` instead of creating a new branch with `-c`.
 
 
 
+
+
+<!-- migrations cmds -->
 
 
 PS D:\vendor> npx prisma validate --config prisma7.config.ts
