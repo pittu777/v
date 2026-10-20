@@ -1,12 +1,9 @@
 
 
 
+import { inStock, isLowStock, IsOutOfStock } from "../../../../lib/formatters";
 import type { Slot } from "../components/SlotCard";
-import {
-  inStock,
-  isLowStock,
-  IsOutOfStock,
-} from "@/lib/formatters";
+
 
 export type SlotFilter =
   | "ALL"

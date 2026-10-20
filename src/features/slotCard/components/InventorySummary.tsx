@@ -1,7 +1,8 @@
 
-import { useInventory } from "@/src/stores/inventory-store";
+import { useInventory } from "@/stores/inventory-store";
 import { Slot } from "./SlotCard";
-import { inStock, isLowStock, IsOutOfStock } from "@/lib/formatters";
+import { isLowStock, IsOutOfStock } from "../../../../lib/formatters";
+
 
 interface InventorySummaryProps {
   slots: Slot[];

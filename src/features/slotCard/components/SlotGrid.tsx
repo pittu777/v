@@ -4,7 +4,7 @@ import { SlotCard } from './SlotCard'
 import { slots } from '../exmple/slotData'
 import InventorySummary from './InventorySummary';
 import { filterSlots, type SlotFilter } from '../utils/slotFilters';
-import { useInventory } from '@/src/stores/inventory-store';
+import { useInventory } from '@/stores/inventory-store';
 import { AddToCartButton } from '../../cart/components/AddToCartButton';
 
 

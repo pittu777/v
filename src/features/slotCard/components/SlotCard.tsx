@@ -1,4 +1,4 @@
-import { formatINR, isLowStock } from "@/lib/formatters";
+import { formatINR, isLowStock } from "../../../../lib/formatters";
 
 
 interface StockLevel{
