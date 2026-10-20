@@ -1,4 +1,4 @@
-import { requireUser } from "@/src/features/users/services/user.service";
+import { requireUser } from "@/features/users/services/user.service";
 import { NextResponse } from "next/server";
 
 

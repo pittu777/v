@@ -2,7 +2,7 @@
 import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 
 export async function requireUser() {

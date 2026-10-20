@@ -1,7 +1,7 @@
 
-import { productSchema } from "@/src/features/products/product.schema";
-import { createProduct, ProductServiceError } from "@/src/features/products/product.service";
-import { prisma } from "@/src/lib/prisma";
+import { productSchema } from "@/features/products/product.schema";
+import { createProduct, ProductServiceError } from "@/features/products/product.service";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 
