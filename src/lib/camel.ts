@@ -3,18 +3,19 @@ const obj = {
   last_name: "Pittu",
   age: 22,
 };
+const src={
+    name:"pittu"
+}
+function conformsTo(obj:any, src:any) {
+  for(const k of Object.keys(src)){
+   if(obj[k] !== src[k]){
+    return false;
+   }
 
-function removeFalsy(obj:any) {
-  const res:any = {};
-  for(const key of Object.keys(obj)){
-    const value = obj[key];
-
-    if(value){
-        res[key] = value;
-    }
+    
 
   }
-  return res;
+  return true;
 }
 
-console.log(removeFalsy(obj));
+console.log(conformsTo(obj, src));
