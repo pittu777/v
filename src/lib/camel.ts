@@ -4,17 +4,17 @@ const obj = {
   age: 22,
 };
 
-function camel(obj:Record<string,string>={}) {
-  const res:Record<string, string> = {};
-  if (typeof obj === "object") {
-    for (const k of Object.keys(obj)) {
-      const result = k.replace(/_([a-z])/g, (_, letter) =>
-        letter.toUpperCase(),
-      );
-      res[result] = obj[k];
+function removeFalsy(obj:any) {
+  const res:any = {};
+  for(const key of Object.keys(obj)){
+    const value = obj[key];
+
+    if(value){
+        res[key] = value;
     }
+
   }
   return res;
 }
 
-console.log(camel(obj));
+console.log(removeFalsy(obj));
