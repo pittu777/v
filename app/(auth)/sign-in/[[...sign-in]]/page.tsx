@@ -1,16 +1,5 @@
-import { SignIn } from "@clerk/nextjs";
-import { Suspense } from "react";
+import { SignInForm } from "@/features/auth/components/sign-in-form";
 
 export default function SignInPage() {
-  return (
-
-      <Suspense fallback={<div>Loading signup...</div>}>
-    <div className="flex min-h-screen items-center justify-center">
-
-      <SignIn 
-      
-      />
-    </div>
-      </Suspense>
-  );
+  return <SignInForm />;
 }

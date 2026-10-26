@@ -1,13 +1,5 @@
-import { SignUp } from "@clerk/nextjs";
-import { Suspense } from "react";
+import { SignUpForm } from "@/features/auth/components/sign-up-form";
 
 export default function SignUpPage() {
-  return (
-    <Suspense>
-
-    <div className="flex min-h-screen items-center justify-center">
-      <SignUp />
-    </div>
-    </Suspense>
-  );
+  return <SignUpForm />;
 }

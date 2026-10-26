@@ -1,64 +1,28 @@
-
+import Link from "next/link";
 import type { ReactNode } from "react";
 
-export default function AuthLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <main className="min-h-screen bg-zinc-950 text-white">
-      <div className="grid min-h-screen lg:grid-cols-2">
-        {/* Branding panel */}
-        <section className="relative hidden flex-col justify-between overflow-hidden bg-zinc-900 p-12 lg:flex">
-          <div className="relative z-10">
-            <a href="/" className="text-2xl font-bold tracking-tight">
-              Vendor<span className="text-emerald-400">.</span>
-            </a>
-            <p className="mt-2 text-sm text-zinc-400">
-              Vending machine management, simplified.
-            </p>
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="grid min-h-screen lg:grid-cols-[1fr_1fr]">
+        <section className="hidden flex-col justify-between border-r bg-muted/30 p-10 lg:flex xl:p-14">
+          <Link href="/" className="w-fit text-lg font-semibold tracking-tight">Vendor</Link>
+          <div className="max-w-md space-y-4">
+            <p className="text-sm font-medium text-muted-foreground">Vending operations</p>
+            <h1 className="text-4xl font-semibold leading-tight tracking-tight">A clearer way to manage your business.</h1>
+            <p className="text-base leading-7 text-muted-foreground">Keep your machines and day-to-day operations organized in one place.</p>
           </div>
-
-          <div className="relative z-10 max-w-lg">
-            <div className="mb-6 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-sm text-emerald-300">
-              Inventory management made simple
-            </div>
-
-            <h1 className="text-5xl font-semibold leading-tight tracking-tight">
-              Everything you need to manage your vending business.
-            </h1>
-
-            <p className="mt-6 leading-7 text-zinc-400">
-              Track machines, monitor stock, manage products, and keep
-              your operations organized from one dashboard.
-            </p>
-          </div>
-
-          <p className="relative z-10 text-sm text-zinc-500">
-            {/* © {new Date().getFullYear()} Vendor. All rights reserved. */}
-          </p>
-
-          {/* Decorative background */}
-          <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+          <p className="text-xs text-muted-foreground">Vendor management platform</p>
         </section>
 
-        {/* Authentication form */}
-        <section className="flex min-h-screen items-center justify-center px-5 py-12 sm:px-10">
-          <div className="w-full max-w-md">
-            <div className="mb-8 lg:hidden">
-              <a href="/" className="text-2xl font-bold">
-                Vendor<span className="text-emerald-400">.</span>
-              </a>
-            </div>
-
+        <section className="flex min-h-screen flex-col px-5 py-6 sm:px-8 lg:justify-center lg:px-12">
+          <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center lg:flex-none">
+            <Link href="/" className="mb-10 w-fit text-lg font-semibold tracking-tight lg:hidden">Vendor</Link>
             {children}
-
-            <p className="mt-8 text-center text-xs leading-5 text-zinc-500">
-              By continuing, you agree to our Terms of Service and
-              Privacy Policy.
-            </p>
           </div>
+          <footer className="mx-auto mt-8 w-full max-w-sm text-center text-xs text-muted-foreground">
+            Secure access to your vending operations
+          </footer>
         </section>
       </div>
     </main>
