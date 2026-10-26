@@ -578,3 +578,17 @@ Prisma schema loaded from prisma\schema.prisma.
 ✔ Generated Prisma Client (7.10.1) to .\src\generated\prisma in 95ms
 
 PS D:\vendor> 
+
+
+if we want to re apply any migration 
+
+I checked the current migration folders: the four original migrations are intact, and there is no Vendor migration folder now. The Prisma schema still contains the Vendor model.
+Run these from D:\vendor:
+
+
+npx prisma migrate status --config prisma7.config.ts
+npx prisma migrate dev --config prisma7.config.ts --name add_vendor
+npx prisma generate --config prisma7.config.ts
+
+
+The migrate dev command will create a fresh migration.sql from the schema change and apply it. If Prisma asks to reset the database or reports drift, stop and don’t accept the reset; share that output so we can choose a safe recovery.
