@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import type { OAuthStrategy } from "@clerk/nextjs/types";
 import { useSignIn } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SocialAuthButtons } from "@/features/auth/components/social-auth-buttons";
 
 function messageFrom(error: unknown) {
   if (error && typeof error === "object" && "errors" in error) {
@@ -25,21 +27,21 @@ export function SignInForm() {
   const [verificationRequired, setVerificationRequired] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [googleBusy, setGoogleBusy] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState<OAuthStrategy | null>(null);
 
-  async function signInWithGoogle() {
+  async function signInWithProvider(strategy: OAuthStrategy) {
     setError("");
-    setGoogleBusy(true);
+    setLoadingProvider(strategy);
     try {
       const { error: ssoError } = await signIn.sso({
-        strategy: "oauth_google",
+        strategy,
         redirectUrl: "/",
         redirectCallbackUrl: "/sso-callback",
       });
       if (ssoError) throw ssoError;
     } catch (cause) {
       setError(messageFrom(cause));
-      setGoogleBusy(false);
+      setLoadingProvider(null);
     }
   }
 
@@ -105,18 +107,12 @@ export function SignInForm() {
         </p>
       </header>
 
-      {!verificationRequired && (
-        <>
-          <Button type="button" variant="outline" className="h-10 w-full" disabled={fetchStatus === "fetching" || busy || googleBusy} onClick={signInWithGoogle}>
-            <span aria-hidden="true" className="mr-2 font-semibold">G</span>
-            {googleBusy ? "Connecting to Google…" : "Continue with Google"}
-          </Button>
-          <div className="relative flex items-center">
-            <div className="w-full border-t" />
-            <span className="absolute left-1/2 -translate-x-1/2 bg-background px-3 text-xs text-muted-foreground">or continue with email</span>
-          </div>
-        </>
-      )}
+      <SocialAuthButtons
+        onSelect={signInWithProvider}
+        loadingStrategy={loadingProvider}
+        disabled={fetchStatus === "fetching" || busy}
+        visible={!verificationRequired}
+      />
 
       <form className="space-y-4" onSubmit={verificationRequired ? submitCode : submitCredentials}>
         {!verificationRequired ? (
@@ -137,7 +133,7 @@ export function SignInForm() {
           </div>
         )}
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-        <Button type="submit" className="h-10 w-full" disabled={fetchStatus === "fetching" || busy || googleBusy}>
+        <Button type="submit" className="h-10 w-full" disabled={fetchStatus === "fetching" || busy || loadingProvider !== null}>
           {busy ? "Please wait…" : verificationRequired ? "Verify and sign in" : "Sign in"}
         </Button>
         {verificationRequired && <Button type="button" variant="outline" className="w-full" onClick={() => { setVerificationRequired(false); setCode(""); setError(""); }}>Back to sign in</Button>}
