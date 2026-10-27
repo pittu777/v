@@ -3,15 +3,18 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function VendorOnboardingPage() {
   return (
-    <main className="mx-auto w-full max-w-xl px-6 py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-4 py-10 sm:px-6 lg:py-16">
       <Suspense
         fallback={
-          <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-            <p className="text-sm text-zinc-600">Loading your vendor profile…</p>
-          </div>
+          <Card className="w-full">
+            <CardContent className="p-6 sm:p-8">
+              <p className="text-sm text-muted-foreground">Loading your vendor profile…</p>
+            </CardContent>
+          </Card>
         }
       >
         <VendorOnboardingContent />
@@ -29,32 +32,33 @@ async function VendorOnboardingContent() {
 
   const vendor = await prisma.vendor.findUnique({
     where: { clerkId: userId },
-    select: { businessName: true },
+    select: { id: true },
   });
 
-  return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-      <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
-        Vendor onboarding
-      </p>
-      <h1 className="mt-2 text-2xl font-bold text-zinc-950">
-        Set up your vendor profile
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600">
-        Create the business profile that will own or operate your vending
-        machines.
-      </p>
+  if (vendor) {
+    redirect("/vendor/dashboard");
+  }
 
-      <div className="mt-8">
-        {vendor ? (
-          <div className="rounded-lg bg-emerald-50 p-4 text-emerald-950">
-            <h2 className="font-semibold">Your profile is set up</h2>
-            <p className="mt-1">{vendor.businessName}</p>
-          </div>
-        ) : (
+  return (
+    <Card className="w-full">
+      <CardHeader className="space-y-3 p-6 sm:p-8 sm:pb-6">
+        <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          Vendor onboarding
+        </p>
+        <div className="space-y-2">
+          <CardTitle className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Set up your business profile
+          </CardTitle>
+          <CardDescription className="max-w-xl text-sm leading-6">
+            Add the details used to identify your business and manage the vending machines you own or operate.
+          </CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="p-6 pt-0 sm:p-8 sm:pt-0">
+        <div className="border-t pt-6">
           <VendorOnboardingForm />
-        )}
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

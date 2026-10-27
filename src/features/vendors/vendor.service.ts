@@ -32,6 +32,8 @@ export async function getMyVendor() {
     select: {
       id: true,
       businessName: true,
+      contactPerson: true,
+      businessEmail: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -88,10 +90,14 @@ export async function createMyVendor(input: CreateVendorInput) {
         data: {
           clerkId: user.clerkId,
           businessName: input.businessName,
+          contactPerson: input.contactPerson,
+          businessEmail: input.businessEmail,
         },
         select: {
           id: true,
           businessName: true,
+          contactPerson: true,
+          businessEmail: true,
           createdAt: true,
           updatedAt: true,
         },
