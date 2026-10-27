@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreateMachineForm } from "@/features/machines/components/CreateMachineForm";
+
 import { getMyMachines, MachineServiceError } from "@/features/machines/machine.service";
 import { connection } from "next/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { MachineForm } from "@/features/machines/components/MachineForm";
 
 export default function VendorMachinesPage() {
   return (
@@ -70,7 +71,7 @@ async function VendorMachinesContent() {
             <CardDescription>Enter an identifying code and a name. Location is optional.</CardDescription>
           </CardHeader>
           <CardContent>
-            <CreateMachineForm />
+            <MachineForm />
           </CardContent>
         </Card>
 
@@ -93,15 +94,20 @@ async function VendorMachinesContent() {
               <ul className="divide-y">
                 {machines.map((machine) => (
                   <li key={machine.id} className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{machine.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {machine.machineCode}{machine.location ? ` · ${machine.location}` : ""}
-                      </p>
-                    </div>
-                    <span className="w-fit rounded-full border px-2.5 py-1 text-xs text-muted-foreground">
-                      {machine.status.toLowerCase()}
-                    </span>
+                    <Link
+                      href={`/vendor/machines/${machine.id}`}
+                      className="flex min-w-0 flex-1 flex-col gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{machine.name}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {machine.machineCode}{machine.location ? ` · ${machine.location}` : ""}
+                        </p>
+                      </div>
+                      <span className="w-fit rounded-full border px-2.5 py-1 text-xs text-muted-foreground">
+                        {machine.status.toLowerCase()}
+                      </span>
+                    </Link>
                   </li>
                 ))}
               </ul>

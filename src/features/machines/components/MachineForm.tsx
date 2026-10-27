@@ -9,14 +9,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createMachineSchema, type CreateMachineInput } from "@/features/machines/machine.schema";
 
-type CreateMachineResponse = {
+type EditableMachine = {
+  id: string;
+  machineCode: string;
+  name: string;
+  location: string | null;
+};
+
+type MachineResponse = {
   success?: boolean;
   message?: string;
   errors?: Partial<Record<keyof CreateMachineInput, string[]>>;
 };
 
-export function CreateMachineForm() {
+export function MachineForm({ machine }: { machine?: EditableMachine }) {
   const router = useRouter();
+  const isEditing = Boolean(machine);
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const {
@@ -25,9 +33,13 @@ export function CreateMachineForm() {
     setError,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreateMachineInput>({
+  } = useForm({
     resolver: zodResolver(createMachineSchema),
-    defaultValues: { machineCode: "", name: "", location: "" },
+    defaultValues: {
+      machineCode: machine?.machineCode ?? "",
+      name: machine?.name ?? "",
+      location: machine?.location ?? "",
+    },
   });
 
   async function submit(values: CreateMachineInput) {
@@ -35,19 +47,28 @@ export function CreateMachineForm() {
     setSuccessMessage(null);
 
     try {
-      const response = await fetch("/api/vendors/me/machines", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const result = (await response.json()) as CreateMachineResponse;
+      const response = await fetch(
+        machine ? `/api/vendors/me/machines/${machine.id}` : "/api/vendors/me/machines",
+        {
+          method: machine ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        },
+      );
+      const result = (await response.json()) as MachineResponse;
 
       if (!response.ok || !result.success) {
         for (const name of Object.keys(result.errors ?? {}) as (keyof CreateMachineInput)[]) {
           const message = result.errors?.[name]?.[0];
           if (message) setError(name, { type: "server", message });
         }
-        setServerError(result.message ?? "We couldn’t create this machine. Please try again.");
+        setServerError(result.message ?? "We couldn’t save this machine. Please try again.");
+        return;
+      }
+
+      if (machine) {
+        router.replace(`/vendor/machines/${machine.id}`);
+        router.refresh();
         return;
       }
 
@@ -115,7 +136,7 @@ export function CreateMachineForm() {
       {successMessage && <p role="status" className="text-sm text-muted-foreground">{successMessage}</p>}
 
       <Button type="submit" className="h-10 w-full sm:w-auto" disabled={isSubmitting}>
-        {isSubmitting ? "Adding machine…" : "Add machine"}
+        {isSubmitting ? "Saving machine…" : isEditing ? "Save changes" : "Add machine"}
       </Button>
     </form>
   );

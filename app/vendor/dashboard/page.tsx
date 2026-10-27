@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignOutControl } from "@/features/auth/components/SignOutControl";
+import { getMyMachines } from "@/features/machines/machine.service";
 import { getMyVendor, VendorServiceError } from "@/features/vendors/vendor.service";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -40,6 +41,8 @@ async function VendorDashboardContent() {
     }
     throw error;
   }
+  const machines = await getMyMachines();
+  const activeMachineCount = machines.filter((machine) => machine.status === "ACTIVE").length;
 
   return (
     <div className="space-y-8">
@@ -59,12 +62,62 @@ async function VendorDashboardContent() {
           <Button nativeButton={false} variant="outline" render={<Link href="/vendor/machines" />}>
             Manage machines
           </Button>
-          <Button nativeButton={false} variant="outline" render={<Link href="/" />}>
-            Open inventory
-          </Button>
           <SignOutControl />
         </div>
       </header>
+
+      <section aria-label="Machine overview" className="grid gap-4 sm:grid-cols-2">
+        <SummaryCard label="Registered machines" value={machines.length} />
+        <SummaryCard label="Active machines" value={activeMachineCount} />
+      </section>
+
+      <section aria-labelledby="recent-machines-title">
+        <Card>
+          <CardHeader className="flex-row items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle id="recent-machines-title">Machines</CardTitle>
+              <CardDescription>Your machines and their current status.</CardDescription>
+            </div>
+            <Button nativeButton={false} variant="ghost" render={<Link href="/vendor/machines" />}>
+              View all
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {machines.length === 0 ? (
+              <div className="rounded-lg border border-dashed px-5 py-8 text-center">
+                <p className="text-sm font-medium">No machines registered</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Add a machine to start organizing your vending operations.
+                </p>
+                <Button className="mt-4" nativeButton={false} variant="outline" render={<Link href="/vendor/machines" />}>
+                  Add a machine
+                </Button>
+              </div>
+            ) : (
+              <ul className="divide-y">
+                {machines.slice(0, 5).map((machine) => (
+                  <li key={machine.id}>
+                    <Link
+                      href={`/vendor/machines/${machine.id}`}
+                      className="flex flex-col gap-2 rounded-md py-4 first:pt-0 last:pb-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <span>
+                        <span className="block text-sm font-medium">{machine.name}</span>
+                        <span className="mt-1 block text-xs text-muted-foreground">
+                          {machine.machineCode}{machine.location ? ` · ${machine.location}` : ""}
+                        </span>
+                      </span>
+                      <span className="w-fit rounded-full border px-2.5 py-1 text-xs text-muted-foreground">
+                        {machine.status.toLowerCase()}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      </section>
 
       <section aria-labelledby="business-profile-title" className="max-w-2xl">
         <Card>
@@ -82,6 +135,17 @@ async function VendorDashboardContent() {
         </Card>
       </section>
     </div>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: number }) {
+  return (
+    <Card>
+      <CardContent className="space-y-2 p-5">
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-3xl font-semibold tracking-tight">{value}</p>
+      </CardContent>
+    </Card>
   );
 }
 
