@@ -1,7 +1,8 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { prisma } from "@/lib/prisma";
+import { NextRequest } from "next/server"; 
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) { 
   let event: Awaited<ReturnType<typeof verifyWebhook>>;
   try {
     event = await verifyWebhook(request);
@@ -19,8 +20,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Idempotent: Clerk may retry delivery. The User -> Vendor -> Machine
-    // cascade in the schema removes this account's owned records as well.
     await prisma.user.deleteMany({ where: { clerkId } });
     return Response.json({ received: true });
   } catch (error) {
@@ -32,7 +31,6 @@ export async function POST(request: Request) {
           ? error.code
           : undefined,
     });
-    // A non-2xx response lets Clerk retry the event.
     return new Response("Unable to sync user deletion", { status: 500 });
   }
 }
