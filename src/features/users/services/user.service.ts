@@ -12,14 +12,16 @@ export async function requireUser() {
     throw new Error("UNAUTHORIZED");
   }
 
-  return prisma.user.upsert({
-    where: {
-      clerkId: userId,
-    },
-    update: {},
-    create: {
-      clerkId: userId,
-    },
+  // Requests can arrive together on first sign-in (for example, parallel
+  // dashboard data loads). PostgreSQL's unique conflict handling makes this
+  // create idempotent when another request inserts the same Clerk user first.
+  await prisma.user.createMany({
+    data: [{ clerkId: userId }],
+    skipDuplicates: true,
+  });
+
+  return prisma.user.findUniqueOrThrow({
+    where: { clerkId: userId },
   });
 }
 

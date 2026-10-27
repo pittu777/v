@@ -92,7 +92,7 @@ export function SocialAuthButtons({
               <span>
                 {loadingStrategy === provider.strategy
                   ? `Connecting…`
-                  : `Continue with ${provider.name}`}
+                  : `Login with ${provider.name}`}
               </span>
             </Button>
           );
