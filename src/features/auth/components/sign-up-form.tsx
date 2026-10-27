@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import type { OAuthStrategy } from "@clerk/nextjs/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,15 +35,18 @@ export function SignUpForm() {
     (flow.verificationRequired && codeTimer.expirySeconds === 0);
 
   return (
-    <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">
+    <div className="space-y-7">
+      <header className="space-y-2.5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Vendor workspace</p>
+        <h1 className="text-[1.75rem] font-semibold tracking-[-0.035em]">
           {flow.verificationRequired ? "Verify your email" : "Create your account"}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {flow.verificationRequired
-            ? `Enter the verification code sent to ${emailAddress}.`
-            : "Set up an account to manage your vending operations."}
+        <p className="text-sm leading-6 text-muted-foreground">
+          {flow.verificationRequired ? (
+            <>Enter the verification code sent to <span className="font-medium text-foreground">{emailAddress}</span>.</>
+          ) : (
+            "Create an account to organize and manage your vending operation."
+          )}
         </p>
       </header>
 
@@ -55,11 +57,11 @@ export function SignUpForm() {
         visible={!flow.verificationRequired}
       />
 
-      <form className="space-y-4" onSubmit={submit}>
+      <form className="space-y-5" onSubmit={submit}>
         {!flow.verificationRequired ? (
           <>
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
               <Input
                 id="email"
                 type="email"
@@ -67,11 +69,12 @@ export function SignUpForm() {
                 required
                 value={emailAddress}
                 onChange={(event) => setEmailAddress(event.target.value)}
-                placeholder="you@company.com"
+                placeholder="name@company.com"
+                className="h-11 rounded-lg bg-background px-3 shadow-none"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -81,13 +84,15 @@ export function SignUpForm() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Create a password"
+                className="h-11 rounded-lg bg-background px-3 shadow-none"
               />
+              <p className="text-xs leading-5 text-muted-foreground">Use at least 8 characters.</p>
             </div>
           </>
         ) : (
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="code">Verification code</Label>
+              <Label htmlFor="code" className="text-sm font-medium">Verification code</Label>
               <Input
                 id="code"
                 inputMode="numeric"
@@ -96,15 +101,16 @@ export function SignUpForm() {
                 value={code}
                 onChange={(event) => setCode(event.target.value)}
                 placeholder="Enter the code"
+                className="h-11 rounded-lg bg-background px-3 text-center font-mono tracking-[0.25em] shadow-none"
               />
             </div>
-            <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-live="polite">
+            <div className="flex flex-wrap justify-between gap-x-4 gap-y-2 rounded-lg bg-muted/50 px-3 py-2.5 text-xs text-muted-foreground" aria-live="polite">
               <span>
                 {codeTimer.expirySeconds > 0
                   ? `Code expires in ${codeTimer.formatTime(codeTimer.expirySeconds)}`
                   : "Code expired. Request a new code."}
               </span>
-              <span>
+              <span className="sm:ml-auto sm:text-right">
                 {codeTimer.resendSeconds > 0
                   ? `Resend available in ${codeTimer.formatTime(codeTimer.resendSeconds)}`
                   : "You can request another code."}
@@ -113,8 +119,8 @@ export function SignUpForm() {
           </div>
         )}
 
-        {flow.error && <p role="alert" className="text-sm text-destructive">{flow.error}</p>}
-        <Button type="submit" className="h-10 w-full" disabled={disableSubmit}>
+        {flow.error && <p role="alert" aria-live="assertive" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-3 text-sm leading-5 text-destructive">{flow.error}</p>}
+        <Button type="submit" className="h-11 w-full rounded-lg font-semibold" disabled={disableSubmit}>
           {flow.busy ? "Please wait…" : flow.verificationRequired ? "Verify email" : "Create account"}
         </Button>
         {flow.verificationRequired && (
@@ -122,6 +128,7 @@ export function SignUpForm() {
             <Button
               type="button"
               variant="outline"
+              className="h-11 rounded-lg"
               disabled={flow.busy || codeTimer.resendSeconds > 0}
               onClick={() => void flow.resendCode()}
             >
@@ -129,7 +136,7 @@ export function SignUpForm() {
                 ? `Resend in ${codeTimer.formatTime(codeTimer.resendSeconds)}`
                 : "Resend code"}
             </Button>
-            <Button type="button" variant="outline" disabled={flow.busy} onClick={startOver}>
+            <Button type="button" variant="outline" className="h-11 rounded-lg" disabled={flow.busy} onClick={startOver}>
               Use a different email
             </Button>
           </div>
@@ -137,9 +144,9 @@ export function SignUpForm() {
       </form>
       <div id="clerk-captcha" />
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="border-t pt-5 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link className="font-medium text-foreground underline-offset-4 hover:underline" href="/sign-in">
+        <Link className="font-semibold text-foreground underline-offset-4 hover:underline" href="/sign-in">
           Sign in
         </Link>
       </p>

@@ -99,11 +99,16 @@ export function SignInForm() {
   }
 
   return (
-    <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">{verificationRequired ? "Verify your sign in" : "Welcome back"}</h1>
-        <p className="text-sm text-muted-foreground">
-          {verificationRequired ? "Enter the email verification code sent to your account." : "Sign in to manage your vending operations."}
+    <div className="space-y-7">
+      <header className="space-y-2.5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Vendor workspace</p>
+        <h1 className="text-[1.75rem] font-semibold tracking-[-0.035em]">
+          {verificationRequired ? "Verify your sign in" : "Welcome back"}
+        </h1>
+        <p className="text-sm leading-6 text-muted-foreground">
+          {verificationRequired
+            ? "Enter the verification code sent to your email to finish signing in."
+            : "Sign in to continue to your vending operations."}
         </p>
       </header>
 
@@ -114,33 +119,51 @@ export function SignInForm() {
         visible={!verificationRequired}
       />
 
-      <form className="space-y-4" onSubmit={verificationRequired ? submitCode : submitCredentials}>
+      <form className="space-y-5" onSubmit={verificationRequired ? submitCode : submitCredentials}>
         {!verificationRequired ? (
           <>
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input id="email" type="email" autoComplete="email" required value={emailAddress} onChange={(event) => setEmailAddress(event.target.value)} placeholder="you@company.com" />
+              <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
+              <Input id="email" type="email" autoComplete="email" required value={emailAddress} onChange={(event) => setEmailAddress(event.target.value)} placeholder="name@company.com" className="h-11 rounded-lg bg-background px-3 shadow-none" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" />
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
+                className="h-11 rounded-lg bg-background px-3 shadow-none"
+              />
             </div>
           </>
         ) : (
           <div className="space-y-2">
-            <Label htmlFor="code">Verification code</Label>
-            <Input id="code" inputMode="numeric" autoComplete="one-time-code" required value={code} onChange={(event) => setCode(event.target.value)} placeholder="Enter the code" />
+            <Label htmlFor="code" className="text-sm font-medium">Verification code</Label>
+            <Input
+              id="code"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              required
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              placeholder="Enter the code"
+              className="h-11 rounded-lg bg-background px-3 text-center font-mono tracking-[0.25em] shadow-none"
+            />
           </div>
         )}
-        {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-        <Button type="submit" className="h-10 w-full" disabled={fetchStatus === "fetching" || busy || loadingProvider !== null}>
+        {error && <p role="alert" aria-live="assertive" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-3 text-sm leading-5 text-destructive">{error}</p>}
+        <Button type="submit" className="h-11 w-full rounded-lg font-semibold" disabled={fetchStatus === "fetching" || busy || loadingProvider !== null}>
           {busy ? "Please wait…" : verificationRequired ? "Verify and sign in" : "Sign in"}
         </Button>
-        {verificationRequired && <Button type="button" variant="outline" className="w-full" onClick={() => { setVerificationRequired(false); setCode(""); setError(""); }}>Back to sign in</Button>}
+        {verificationRequired && <Button type="button" variant="outline" className="h-11 w-full rounded-lg" onClick={() => { setVerificationRequired(false); setCode(""); setError(""); }}>Back to sign in</Button>}
       </form>
 
-      <p className="text-center text-sm text-muted-foreground">
-        New to Vendor? <Link className="font-medium text-foreground underline-offset-4 hover:underline" href="/sign-up">Create an account</Link>
+      <p className="border-t pt-5 text-center text-sm text-muted-foreground">
+        New to Vendor? <Link className="font-semibold text-foreground underline-offset-4 hover:underline" href="/sign-up">Create an account</Link>
       </p>
     </div>
   );

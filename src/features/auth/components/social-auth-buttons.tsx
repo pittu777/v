@@ -75,31 +75,33 @@ export function SocialAuthButtons({
   if (!visible) return null;
 
   return (
-    <div className="space-y-4">
-      {SOCIAL_AUTH_PROVIDERS.map((provider) => {
-        const Icon = provider.icon;
-        return (
-          <Button
-            key={provider.strategy}
-            type="button"
-            variant="outline"
-            className="relative h-10 w-full flex items-center justify-center gap-3 font-medium border-muted-foreground/20 hover:bg-accent"
-            disabled={disabled || loadingStrategy !== null}
-            onClick={() => void onSelect(provider.strategy)}
-          >
-            <Icon />
-            <span>
-              {loadingStrategy === provider.strategy
-                ? `Connecting to ${provider.name}…`
-                : `Continue with ${provider.name}`}
-            </span>
-          </Button>
-        );
-      })}
-      
-      <div className="relative flex items-center pt-2">
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {SOCIAL_AUTH_PROVIDERS.map((provider) => {
+          const Icon = provider.icon;
+          return (
+            <Button
+              key={provider.strategy}
+              type="button"
+              variant="outline"
+              className="h-11 w-full justify-center gap-2.5 rounded-lg border-border bg-background font-medium shadow-none hover:bg-muted"
+              disabled={disabled || loadingStrategy !== null}
+              onClick={() => void onSelect(provider.strategy)}
+            >
+              <Icon />
+              <span>
+                {loadingStrategy === provider.strategy
+                  ? `Connecting…`
+                  : `Continue with ${provider.name}`}
+              </span>
+            </Button>
+          );
+        })}
+      </div>
+
+      <div className="relative flex items-center">
         <div className="w-full border-t" />
-        <span className="absolute left-1/2 -translate-x-1/2 bg-background px-3 text-xs text-muted-foreground tracking-wide uppercase">
+        <span className="absolute left-1/2 -translate-x-1/2 bg-card px-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
           or
         </span>
       </div>
