@@ -116,7 +116,7 @@ export function VendorOnboardingForm() {
               key={field.name}
               className={`space-y-2 ${field.wide ? "sm:col-span-2" : ""}`}
             >
-              <Label htmlFor={field.name}>{field.label}</Label>
+              <Label htmlFor={field.name} className="text-sm font-medium">{field.label}</Label>
               <Input
                 id={field.name}
                 type={field.type}
@@ -124,7 +124,7 @@ export function VendorOnboardingForm() {
                 placeholder={field.placeholder}
                 aria-invalid={Boolean(error)}
                 aria-describedby={error ? errorId : undefined}
-                className="h-10"
+                className="h-11"
                 {...register(field.name)}
               />
               {error?.message && (
@@ -147,7 +147,7 @@ export function VendorOnboardingForm() {
         <p className="max-w-sm text-xs leading-5 text-muted-foreground">
           Your profile is linked to your signed-in account and can only be managed by you.
         </p>
-        <Button type="submit" className="h-10 w-full sm:w-auto" disabled={isSubmitting}>
+        <Button type="submit" className="h-11 w-full sm:w-auto" disabled={isSubmitting}>
           {isSubmitting ? "Saving profile…" : "Create vendor profile"}
         </Button>
       </div>

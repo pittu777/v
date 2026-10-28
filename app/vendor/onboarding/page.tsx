@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function VendorOnboardingPage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-4 py-10 sm:px-6 lg:py-16">
+    <main className="mx-auto flex min-h-[calc(100svh-7rem)] w-full max-w-3xl items-center px-4 py-10 sm:px-6 lg:min-h-[calc(100svh-4rem)] lg:py-12">
       <Suspense
         fallback={
           <Card className="w-full">

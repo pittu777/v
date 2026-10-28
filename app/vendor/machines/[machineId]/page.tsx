@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getMyMachine, MachineServiceError } from "@/features/machines/machine.service";
+import { MachineStatus } from "@/features/machines/components/MachineStatus";
 import { connection } from "next/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
+import type { ReactNode } from "react";
 
 type MachinePageProps = { params: Promise<{ machineId: string }> };
 
 export default function VendorMachinePage({ params }: MachinePageProps) {
   return (
-    <main className="mx-auto min-h-screen w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <Suspense fallback={<MachineLoading />}>
         <VendorMachineContent params={params} />
       </Suspense>
@@ -57,7 +59,7 @@ async function VendorMachineContent({ params }: MachinePageProps) {
       </Button>
 
       <Card>
-        <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <CardHeader className="gap-4 sm:grid-cols-[1fr_auto] sm:items-start">
           <div className="space-y-2">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
               Machine details
@@ -72,7 +74,7 @@ async function VendorMachineContent({ params }: MachinePageProps) {
         <CardContent>
           <dl className="grid gap-x-8 gap-y-5 border-t pt-5 sm:grid-cols-2">
             <Detail label="Machine code" value={machine.machineCode} />
-            <Detail label="Status" value={machine.status.toLowerCase()} />
+            <Detail label="Status" value={<MachineStatus status={machine.status} />} />
             <Detail label="Location" value={machine.location || "Not provided"} />
             <Detail label="Added" value={machine.createdAt.toLocaleDateString()} />
           </dl>
@@ -82,7 +84,7 @@ async function VendorMachineContent({ params }: MachinePageProps) {
   );
 }
 
-function Detail({ label, value }: { label: string; value: string }) {
+function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="space-y-1">
       <dt className="text-sm text-muted-foreground">{label}</dt>

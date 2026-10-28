@@ -91,7 +91,7 @@ export function MachineForm({ machine }: { machine?: EditableMachine }) {
             placeholder="VM-001"
             aria-invalid={Boolean(errors.machineCode)}
             aria-describedby={errors.machineCode ? "machineCode-error" : undefined}
-            className="h-10"
+            className="h-11"
             {...register("machineCode")}
           />
           {errors.machineCode?.message && (
@@ -107,7 +107,7 @@ export function MachineForm({ machine }: { machine?: EditableMachine }) {
             placeholder="Lobby machine"
             aria-invalid={Boolean(errors.name)}
             aria-describedby={errors.name ? "name-error" : undefined}
-            className="h-10"
+            className="h-11"
             {...register("name")}
           />
           {errors.name?.message && (
@@ -123,7 +123,7 @@ export function MachineForm({ machine }: { machine?: EditableMachine }) {
             placeholder="Building, floor, or site address"
             aria-invalid={Boolean(errors.location)}
             aria-describedby={errors.location ? "location-error" : undefined}
-            className="h-10"
+            className="h-11"
             {...register("location")}
           />
           {errors.location?.message && (
@@ -132,10 +132,18 @@ export function MachineForm({ machine }: { machine?: EditableMachine }) {
         </div>
       </div>
 
-      {serverError && <p role="alert" className="text-sm text-destructive">{serverError}</p>}
-      {successMessage && <p role="status" className="text-sm text-muted-foreground">{successMessage}</p>}
+      {serverError && (
+        <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-3 text-sm leading-5 text-destructive">
+          {serverError}
+        </p>
+      )}
+      {successMessage && (
+        <p role="status" className="rounded-lg border border-success/25 bg-success/5 px-3.5 py-3 text-sm leading-5 text-success">
+          {successMessage}
+        </p>
+      )}
 
-      <Button type="submit" className="h-10 w-full sm:w-auto" disabled={isSubmitting}>
+      <Button type="submit" className="h-11 w-full sm:w-auto" disabled={isSubmitting}>
         {isSubmitting ? "Saving machine…" : isEditing ? "Save changes" : "Add machine"}
       </Button>
     </form>
