@@ -34,3 +34,18 @@ export async function requireAdmin() {
 
   return user;
 }
+
+
+export async function requireVendor(){
+  const user = await requireUser();
+
+  const vendor = await prisma.vendor.findUnique({
+    where:{
+      clerkId: user.clerkId,
+    },
+  });
+  if(!vendor){
+    throw new Error("FORBIDDEN");
+  }
+  return vendor;
+}

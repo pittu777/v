@@ -1,8 +1,12 @@
 import {
   MachineServiceError,
   updateMyMachine,
+  updateMyMachineStatus,
 } from "@/features/machines/machine.service";
-import { createMachineSchema } from "@/features/machines/machine.schema";
+import {
+  createMachineSchema,
+  updateMachineStatusSchema,
+} from "@/features/machines/machine.schema";
 import { NextResponse } from "next/server";
 
 function errorResponse(error: unknown) {
@@ -49,20 +53,39 @@ export async function PATCH(
     );
   }
 
-  const parsed = createMachineSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Invalid machine details",
-        errors: parsed.error.flatten().fieldErrors,
-      },
-      { status: 400 },
-    );
-  }
+  const isStatusUpdate = typeof body === "object" && body !== null && "status" in body;
 
   try {
     const { machineId } = await params;
+    if (isStatusUpdate) {
+      const parsed = updateMachineStatusSchema.safeParse(body);
+      if (!parsed.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Invalid machine status",
+            errors: parsed.error.flatten().fieldErrors,
+          },
+          { status: 400 },
+        );
+      }
+
+      const machine = await updateMyMachineStatus(machineId, parsed.data);
+      return NextResponse.json({ success: true, data: machine });
+    }
+
+    const parsed = createMachineSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid machine details",
+          errors: parsed.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
+
     const machine = await updateMyMachine(machineId, parsed.data);
     return NextResponse.json({ success: true, data: machine });
   } catch (error) {

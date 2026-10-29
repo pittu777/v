@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getMyMachine, MachineServiceError } from "@/features/machines/machine.service";
 import { MachineStatus } from "@/features/machines/components/MachineStatus";
+import { MachineStatusControl } from "@/features/machines/components/MachineStatusControl";
 import { connection } from "next/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -78,6 +79,13 @@ async function VendorMachineContent({ params }: MachinePageProps) {
             <Detail label="Location" value={machine.location || "Not provided"} />
             <Detail label="Added" value={machine.createdAt.toLocaleDateString()} />
           </dl>
+          <div className="mt-6 border-t pt-5">
+            <p className="mb-3 text-sm font-medium">Operational status</p>
+            <p className="mb-4 max-w-xl text-sm leading-6 text-muted-foreground">
+              An inactive machine remains registered to your account but is marked as not currently operating.
+            </p>
+            <MachineStatusControl machineId={machine.id} status={machine.status} />
+          </div>
         </CardContent>
       </Card>
     </div>

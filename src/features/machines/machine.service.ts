@@ -2,7 +2,7 @@ import "server-only";
 
 import { requireUser } from "@/features/users/services/user.service";
 import { prisma } from "@/lib/prisma";
-import type { CreateMachineInput } from "./machine.schema";
+import type { CreateMachineInput, UpdateMachineStatusInput } from "./machine.schema";
 
 export class MachineServiceError extends Error {
   constructor(
@@ -121,6 +121,42 @@ export async function updateMyMachine(machineId: string, input: CreateMachineInp
         name: input.name,
         location: input.location ?? null,
       },
+      select: {
+        id: true,
+        machineCode: true,
+        name: true,
+        location: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2025"
+    ) {
+      throw new MachineServiceError("NOT_FOUND", "Machine not found");
+    }
+
+    throw error;
+  }
+}
+
+export async function updateMyMachineStatus(
+  machineId: string,
+  input: UpdateMachineStatusInput,
+) {
+  const vendor = await requireVendor();
+
+  try {
+    return await prisma.vendingMachine.update({
+      // Include the vendor in the write predicate so another vendor's machine
+      // cannot be changed by guessing its ID.
+      where: { id: machineId, vendorId: vendor.id },
+      data: { status: input.status },
       select: {
         id: true,
         machineCode: true,

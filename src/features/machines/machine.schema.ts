@@ -20,3 +20,9 @@ export const createMachineSchema = z.object({
 });
 
 export type CreateMachineInput = z.infer<typeof createMachineSchema>;
+
+export const updateMachineStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "INACTIVE"]),
+});
+
+export type UpdateMachineStatusInput = z.infer<typeof updateMachineStatusSchema>;
