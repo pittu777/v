@@ -50,6 +50,12 @@ export const updateProductSchema = z
       .finite()
       .positive("Price must be greater than zero")
       .optional(),
+
+    stock: z.coerce
+      .number()
+      .int("Stock must be an integer")
+      .nonnegative("Stock cannot be negative")
+      .optional(),
   })
   .strict()
   .refine(

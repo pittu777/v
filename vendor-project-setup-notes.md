@@ -592,3 +592,9 @@ npx prisma generate --config prisma7.config.ts
 
 
 The migrate dev command will create a fresh migration.sql from the schema change and apply it. If Prisma asks to reset the database or reports drift, stop and don’t accept the reset; share that output so we can choose a safe recovery.
+
+
+
+<!-- for 404 erros in post man -->
+
+please use latest session token from clerk on every token

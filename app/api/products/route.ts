@@ -1,14 +1,23 @@
 
 import { productSchema } from "@/features/products/product.schema";
 import { createProduct, ProductServiceError } from "@/features/products/product.service";
+import { requireVendor } from "@/features/users/services/user.service";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 
+
 export async function GET() {
   try {
+    const vendor = await requireVendor();
+
     const products = await prisma.product.findMany({
-      orderBy: { createdAt: "desc" },
+      where: {
+        vendorId: vendor.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json({
@@ -19,7 +28,21 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error("Get products failed");
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json(
+        { success: false, message: "Please sign in to continue" },
+        { status: 401 },
+      );
+    }
+
+    if (error instanceof Error && error.message === "FORBIDDEN") {
+      return NextResponse.json(
+        { success: false, message: "Vendor profile required" },
+        { status: 403 },
+      );
+    }
+
+    console.error("Get products API failed", error);
 
     return NextResponse.json(
       { success: false, message: "Internal server error" },

@@ -148,3 +148,29 @@ export async function updateProduct(
     updatedAt: product.updatedAt,
   };
 }
+
+
+
+
+export async function deleteProduct(id: string){
+  const vendor = await getAuthenticatedVendor();
+
+  const result = await prisma.product.deleteMany({
+    where:{
+      id,
+      vendorId: vendor.id,
+    },
+  })
+
+  if(result.count===0){
+    throw new ProductServiceError(
+      "NOT_FOUND",
+      "Product not Found",
+    );
+  }
+
+  return {
+    message: "Product deleted successfully",
+  }
+
+}
