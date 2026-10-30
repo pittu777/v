@@ -45,6 +45,22 @@ async function getAuthenticatedVendor() {
 }
 
 
+export async function listProducts() {
+  const vendor = await requireVendor();
+  const products = await prisma.product.findMany({
+    where: {
+      vendorId: vendor.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return products.map((product) => ({
+    ...product,
+    price: product.price.toString(),
+  }));
+}
+
 export async function createProduct(input: ProductInput) {
   const vendor = await getAuthenticatedVendor();
 
