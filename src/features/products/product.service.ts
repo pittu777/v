@@ -1,6 +1,7 @@
 
 import "server-only";
-import { ProductInput, UpdateProductInput, updateProductSchema } from "./product.schema";
+import { updateProductSchema } from "./product.schema";
+import type { ProductInput, UpdateProductInput } from "./product.schema";
 import { requireVendor } from "../users/services/user.service";
 import { prisma } from "@/lib/prisma";
 
@@ -46,7 +47,7 @@ async function getAuthenticatedVendor() {
 
 
 export async function listProducts() {
-  const vendor = await requireVendor();
+  const vendor = await getAuthenticatedVendor();
   const products = await prisma.product.findMany({
     where: {
       vendorId: vendor.id,
@@ -75,6 +76,7 @@ export async function createProduct(input: ProductInput) {
         description: input.description?.trim() || null,
         price: input.price,
         stock: input.stock,
+        isActive: input.isActive,
       },
     });
 
@@ -123,13 +125,27 @@ export async function updateProduct(
   }
 
   // Update only when the product belongs to this vendor.
-  const result = await prisma.product.updateMany({
-    where: {
-      id,
-      vendorId: vendor.id,
-    },
-    data: validated.data,
-  });
+  let result;
+  try {
+    result = await prisma.product.updateMany({
+      where: {
+        id,
+        vendorId: vendor.id,
+      },
+      data: validated.data,
+    });
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2002"
+    ) {
+      throw new ProductServiceError("DUPLICATE_PRODUCT", "This SKU is already in use by your catalog");
+    }
+
+    throw error;
+  }
 
   if (result.count === 0) {
     throw new ProductServiceError(

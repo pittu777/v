@@ -18,7 +18,7 @@ datasource db {
 model Product{
   id     String    @id @default(cuid())
   vendorId  String
-  sku    String   @unique
+  sku    String
   name        String
   description String?
   price       Decimal  @db.Decimal(10, 2)
@@ -27,6 +27,9 @@ model Product{
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, sku])
+  @@index([vendorId, createdAt])
 }
 
 

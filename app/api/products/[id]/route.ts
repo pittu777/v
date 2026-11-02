@@ -69,33 +69,35 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
 
 
-export async function DELETE(request: Request, { params }: RouteContext) {
-  try{
-
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  try {
     const { id } = await params;
-    
     const result = await deleteProduct(id);
-    
+
     return NextResponse.json({
       success: true,
       data: result,
-    })
-  }catch(error){
-    if(error instanceof ProductServiceError){
-      const status = error.code === "NOT_FOUND" ? 404 : 400;
+    });
+  } catch (error) {
+    if (error instanceof ProductServiceError) {
+      const status =
+        error.code === "UNAUTHORIZED" ? 401 :
+        error.code === "FORBIDDEN" ? 403 :
+        error.code === "NOT_FOUND" ? 404 :
+        error.code === "DUPLICATE_PRODUCT" ? 409 : 400;
+
       return NextResponse.json({
         success: false,
         message: error.message,
-      },
-    {status},)
+        code: error.code,
+      }, { status });
     }
-    console.error("delete product failed:", error);
+    console.error("Delete product failed");
 
     return NextResponse.json({
-      success:false,
-      message: "Internal Server error",
-    },{status:500})
+      success: false,
+      message: "Internal server error",
+    }, { status: 500 });
   }
-
 }
 

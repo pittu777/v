@@ -7,8 +7,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { CircleCheck, Monitor, Plus } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Package, Plus } from "lucide-react";
 
 export default function VendorProductsPage() {
   return (
@@ -42,6 +41,9 @@ async function VendorProductsContent() {
   try {
     vendor = await getMyVendor();
   } catch (error) {
+    if (error instanceof VendorServiceError && error.code === "UNAUTHORIZED") {
+      redirect("/sign-in");
+    }
     if (error instanceof VendorServiceError && error.code === "NOT_FOUND") {
       redirect("/vendor/onboarding");
     }
@@ -53,22 +55,10 @@ async function VendorProductsContent() {
     products = await listProducts();
   } catch (error) {
     if (error instanceof ProductServiceError && error.code === "UNAUTHORIZED") {
-      return (
-        <div className="space-y-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            Please sign in to continue
-          </p>
-        </div>
-      );
+      redirect("/sign-in");
     }
     if (error instanceof ProductServiceError && error.code === "FORBIDDEN") {
-      return (
-        <div className="space-y-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            Vendor profile required
-          </p>
-        </div>
-      );
+      redirect("/vendor/onboarding");
     }
     throw error;
   }
@@ -97,10 +87,13 @@ async function VendorProductsContent() {
           </Button>
       </header>
 
-      <section aria-label="Product list" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section aria-label="Product list" className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          {products.length} {products.length === 1 ? "product" : "products"} in your catalog
+        </p>
         {products.length === 0 ? (
           <div className="rounded-xl border border-dashed bg-muted/20 px-5 py-9 text-center">
-            <Monitor aria-hidden="true" className="mx-auto mb-3 size-5 text-muted-foreground" />
+            <Package aria-hidden="true" className="mx-auto mb-3 size-5 text-muted-foreground" />
             <p className="text-sm font-medium">No products registered</p>
             <p className="mx-auto mt-1 max-w-sm text-sm leading-6 text-muted-foreground">
               Add your first product to start organizing your vending operations.
@@ -115,27 +108,30 @@ async function VendorProductsContent() {
             </Button>
           </div>
         ) : (
-          <ul className="divide-y divide-border/80">
-            {products.slice(0, 8).map((product) => (
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => (
               <li key={product.id}>
                 <Link
                   href={`/vendor/products/${product.id}`}
-                  className="-mx-2 flex flex-col gap-3 rounded-lg px-2 py-4 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:justify-between"
+                  className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium">
-                      {product.name}
-                    </span>
-                    <span className="mt-1 block truncate text-xs text-muted-foreground">
-                      SKU: {product.sku}
-                    </span>
-                  </span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-medium">${product.price}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {product.stock} in stock
-                    </span>
-                  </div>
+                  <Card className="h-full transition-shadow hover:shadow-sm">
+                    <CardHeader className="space-y-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <CardTitle className="line-clamp-2 text-base">{product.name}</CardTitle>
+                        <ProductAvailability isActive={product.isActive} />
+                      </div>
+                      <CardDescription className="truncate">SKU: {product.sku}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-end justify-between gap-3">
+                      <span className="text-lg font-semibold tabular-nums">
+                        {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(Number(product.price))}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {product.stock} in stock
+                      </span>
+                    </CardContent>
+                  </Card>
                 </Link>
               </li>
             ))}
@@ -143,5 +139,15 @@ async function VendorProductsContent() {
         )}
       </section>
     </div>
+  );
+}
+
+function ProductAvailability({ isActive }: { isActive: boolean }) {
+  return (
+    <span className={isActive
+      ? "inline-flex shrink-0 items-center rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-medium text-success"
+      : "inline-flex shrink-0 items-center rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"}>
+      {isActive ? "Active" : "Inactive"}
+    </span>
   );
 }

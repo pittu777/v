@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Boxes, LayoutDashboard, Monitor } from "lucide-react";
+import { Boxes, LayoutDashboard, Monitor, Package } from "lucide-react";
 import { SignOutControl } from "@/features/auth/components/SignOutControl";
 
 const navigation = [
   { href: "/vendor/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/vendor/machines", label: "Machines", icon: Monitor },
+  { href: "/vendor/products", label: "Products", icon: Package },
 ];
 
 export default function VendorLayout({ children }: LayoutProps<"/vendor">) {
